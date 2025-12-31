@@ -5,7 +5,7 @@ namespace CatalogAPI.Products.GetProductByCategory
 
     public record GetProductByCategoryResult(IEnumerable<Product> Products);
 
-    public class GetProductByCategoryQueryHandler
+    internal class GetProductByCategoryQueryHandler
         (IDocumentSession session, ILogger<GetProductByCategoryQueryHandler> logger)
         : IQueryHandler<GetProductByCategoryQuery, GetProductByCategoryResult>
     {
