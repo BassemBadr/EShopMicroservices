@@ -13,7 +13,7 @@ namespace CatalogAPI.Products.UpdateProduct
                 .NotEmpty().WithMessage("Product Id is required.");
             RuleFor(x => x.Name)
                 .NotEmpty().WithMessage("Product name is required.")
-                .Length(2,100).WithMessage("Product name must be between 2 and 100 characters.");
+                .Length(2, 100).WithMessage("Product name must be between 2 and 100 characters.");
             RuleFor(x => x.ImageFile)
                 .NotEmpty().WithMessage("ImageFile is required.");
             RuleFor(x => x.Category)
@@ -26,17 +26,15 @@ namespace CatalogAPI.Products.UpdateProduct
     }
 
     internal class UpdateProductCommandHandler
-        (IDocumentSession session, ILogger<UpdateProductCommandHandler> logger)
+        (IDocumentSession session)
         : ICommandHandler<UpdateProductCommand, UpdateProductResult>
     {
         public async Task<UpdateProductResult> Handle(UpdateProductCommand command, CancellationToken cancellationToken)
         {
-            logger.LogInformation("UpdateProductCommandHandler.Handle with {@Command}", command);
-
             var product = await session.LoadAsync<Product>(command.Id, cancellationToken);
 
             if (product is null)
-                throw new ProductNotFoundException();
+                throw new ProductNotFoundException(command.Id);
 
             product.Name = command.Name;
             product.Category = command.Category;
