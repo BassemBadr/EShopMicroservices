@@ -1,5 +1,6 @@
 ﻿global using BuildingBlocks.Behaviors;
 global using BuildingBlocks.CQRS;
+global using BuildingBlocks.Exceptions;
 global using BuildingBlocks.Exceptions.Handler;
 global using Carter;
 global using CatalogAPI.Data;

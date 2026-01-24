@@ -1,23 +1,23 @@
 ﻿using Marten.Schema;
 
-namespace CatalogAPI.Data
+namespace CatalogAPI.Data;
+
+public class CatalogInitialData : IInitialData
 {
-    public class CatalogInitialData : IInitialData
+    public async Task Populate(IDocumentStore store, CancellationToken cancellation)
     {
-        public async Task Populate(IDocumentStore store, CancellationToken cancellation)
-        {
-            using var session = store.LightweightSession();
+        using var session = store.LightweightSession();
 
-            if (await session.Query<Product>().AnyAsync(token: cancellation))
-                return;
+        if (await session.Query<Product>().AnyAsync(token: cancellation))
+            return;
 
-            session.Store(GetPreconfiguredProducts());
-            await session.SaveChangesAsync(cancellation);
-        }
+        session.Store(GetPreconfiguredProducts());
+        await session.SaveChangesAsync(cancellation);
+    }
 
-        private static IEnumerable<Product> GetPreconfiguredProducts() =>
-            [
-                new()
+    private static IEnumerable<Product> GetPreconfiguredProducts() =>
+        [
+            new()
                 {
                     Id = new Guid("5334c996-8457-4cf0-815c-ed2b77c4ff61"),
                     Name = "IPhone X",
@@ -80,6 +80,5 @@ namespace CatalogAPI.Data
                     Price = 240.00M,
                     Category = ["Camera"]
                 }
-            ];
-    }
+        ];
 }
