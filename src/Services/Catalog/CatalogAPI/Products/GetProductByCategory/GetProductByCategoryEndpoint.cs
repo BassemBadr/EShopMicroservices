@@ -1,4 +1,4 @@
-﻿namespace CatalogAPI.Products.GetProductByCategory;
+﻿namespace Catalog.API.Products.GetProductByCategory;
 
 //public record GetProductByCategoryRequest();
 

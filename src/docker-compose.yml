@@ -8,7 +8,13 @@ services:
   distributedcache:
     image: redis:latest
 
-  catalogapi:
+  basket.api:
+    image: ${DOCKER_REGISTRY-}basketapi
+    build:
+      context: .
+      dockerfile: Services/Basket/Basket.API/Dockerfile
+
+  catalog.api:
     image: ${DOCKER_REGISTRY-}catalogapi
     build:
       context: .
@@ -17,3 +23,5 @@ services:
 volumes:
   postgres_catalog:
   postgres_basket:
+
+
