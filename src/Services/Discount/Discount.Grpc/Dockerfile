@@ -7,6 +7,8 @@ WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
+# Create folder for sqlite data file => will attach it to a volume in docker-compose
+RUN mkdir -p /app/files
 
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
