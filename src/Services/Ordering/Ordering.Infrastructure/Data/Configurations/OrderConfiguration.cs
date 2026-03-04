@@ -23,6 +23,9 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
             .WithOne()
             .HasForeignKey(oi => oi.OrderId);
 
+        //to avoid double mapping of orderId in migratin generated from having two lists on order items in main class
+        builder.Ignore(o => o.OrderItems); // We will configure OrderItems separately as they are a collection of entities.
+
         builder.ComplexProperty(
             o => o.OrderName, nameBuilder =>
             {
