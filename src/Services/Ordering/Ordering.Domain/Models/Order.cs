@@ -42,6 +42,7 @@ public class Order : Aggregate<OrderId>
         BillingAddress = billingAddress;
         Payment = payment;
         Status = status;
+
         AddDomainEvent(new OrderUpdatedEvent(this));
     }
 
