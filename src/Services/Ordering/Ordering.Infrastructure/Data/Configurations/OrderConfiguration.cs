@@ -19,12 +19,12 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
             .HasForeignKey(o => o.CustomerId)
             .IsRequired();
 
-        builder.HasMany<OrderItem>()
-            .WithOne()
-            .HasForeignKey(oi => oi.OrderId);
+        builder.HasMany(o => o.OrderItems)
+               .WithOne()
+               .HasForeignKey(oi => oi.OrderId);        
 
-        //to avoid double mapping of orderId in migratin generated from having two lists on order items in main class
-        builder.Ignore(o => o.OrderItems); // We will configure OrderItems separately as they are a collection of entities.
+        builder.Metadata.FindNavigation(nameof(Order.OrderItems))
+               ?.SetPropertyAccessMode(PropertyAccessMode.Field);
 
         builder.ComplexProperty(
             o => o.OrderName, nameBuilder =>
