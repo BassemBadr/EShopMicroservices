@@ -1,6 +1,7 @@
 using Discount.Grpc.Protos;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using BuildingBlocks.Messaging.MassTransit;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,14 +33,18 @@ builder.Services.AddStackExchangeRedisCache(options =>
     options.Configuration = builder.Configuration.GetConnectionString("Redis");
 });
 
-//builder.Services.AddScoped<BasketRepository>();
-//builder.Services.AddScoped<IBasketRepository, CachedBasketRepository>(
-//    provider => {
-//        var basketRepo = provider.GetRequiredService<BasketRepository>();
-//        return new CachedBasketRepository(
-//            basketRepo,
-//            provider.GetRequiredService<IDistributedCache>());
-//    });
+//  Alternative to Decorator pattern for caching
+/*
+builder.Services.AddScoped<BasketRepository>();
+builder.Services.AddScoped<IBasketRepository, CachedBasketRepository>(
+    provider =>
+    {
+        var basketRepo = provider.GetRequiredService<BasketRepository>();
+        return new CachedBasketRepository(
+            basketRepo,
+            provider.GetRequiredService<IDistributedCache>());
+    });
+*/
 
 //  Grpc Services
 builder.Services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(options =>
@@ -54,6 +59,9 @@ builder.Services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(
         };
         return handler;
     });
+
+//Async Communication Services
+builder.Services.AddMessageBroker(builder.Configuration);
 
 //  Cross-Cutting Services
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
