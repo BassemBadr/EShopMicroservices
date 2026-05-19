@@ -2,7 +2,7 @@
 
 public record OrderName
 {
-    private const int DefaultLength = 5;
+    private const int DefaultLength = 40;//"ORD_ + Guid.NewGuid()"
 
     public string Value { get; } = default!;
 

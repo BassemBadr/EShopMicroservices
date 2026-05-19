@@ -1,4 +1,6 @@
-﻿namespace BuildingBlocks.Messaging.Events;
+﻿using MassTransit.DependencyInjection.Registration;
+
+namespace BuildingBlocks.Messaging.Events;
 
 public record BasketCheckoutEvent : IntegrationEvent
 {
@@ -21,4 +23,14 @@ public record BasketCheckoutEvent : IntegrationEvent
     public string Expiration { get; set; } = default!;
     public string CVV { get; set; } = default!;
     public int PaymentMethod { get; set; } = default!;
+
+    public List<BasketCheckoutItem> OrderItems { get; set; } = [];
+}
+
+public record BasketCheckoutItem
+{
+    public Guid ProductId { get; set; } = default;
+    public int Quantity { get; set; } = default;
+    public decimal Price { get; set; } = default;
+
 }

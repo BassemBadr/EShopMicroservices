@@ -33,13 +33,20 @@ public class CheckoutBasketHandler
             return new CheckoutBasketResult(false);
         }
 
-        var eventMessage = command.BasketCheckoutDto.Adapt<BasketCheckoutEvent>();
-        eventMessage.TotalPrice = basket.TotalPrice;
+        var eventMessage = MapBasketToBasketEventMessage(command, basket);
 
         await publishEndpoint.Publish(eventMessage, cancellationToken);
 
         await repository.DeleteBasket(command.BasketCheckoutDto.UserName, cancellationToken);
 
         return new CheckoutBasketResult(true);
+    }
+
+    private static BasketCheckoutEvent MapBasketToBasketEventMessage(CheckoutBasketCommand command, ShoppingCart basket)
+    {
+        var eventMessage = command.BasketCheckoutDto.Adapt<BasketCheckoutEvent>();
+        eventMessage.TotalPrice = basket.TotalPrice;
+        eventMessage.OrderItems = basket.Items.Select(item => item.Adapt<BasketCheckoutItem>()).ToList();
+        return eventMessage;
     }
 }
