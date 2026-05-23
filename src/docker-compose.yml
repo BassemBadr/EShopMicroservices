@@ -1,15 +1,18 @@
 services:
   catalogdb:
-    image: postgres:latest
+    image: postgres:18
 
   basketdb:
-    image: postgres:latest
+    image: postgres:18
 
   distributedcache:
-    image: redis:latest
+    image: redis:8
 
   orderdb:
     image: mcr.microsoft.com/mssql/server:2025-latest
+
+  messagebroker:
+    image: rabbitmq:4-management
 
   basket.api:
     image: ${DOCKER_REGISTRY-}basketapi
