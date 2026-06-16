@@ -32,10 +32,10 @@ namespace Shopping.Web.Pages
             {
                 ProductId = productId,
                 //TODO: add product color to product model
-                Color = "Black",
+                Color = Color,
                 ProductName = productResponse.Product.Name,
                 Price = productResponse.Product.Price,
-                Quantity = 1
+                Quantity = Quantity
             });
 
             await basketService.StoreBasket(new StoreBasketRequest(basket));
