@@ -1,0 +1,4 @@
+$kind: http-request
+url: "{{basket_url}}/health"
+method: GET
+order: 5000

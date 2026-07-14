@@ -1,0 +1,4 @@
+$kind: http-request
+url: "{{yarb_url}}/basket-service/basket/swn"
+method: GET
+order: 1000

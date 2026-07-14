@@ -1,0 +1,10 @@
+name: Localhost
+values:
+  - key: catalog_url
+    value: 'https://localhost:5050'
+  - key: basket_url
+    value: 'https://localhost:5051'
+  - key: ordering_url
+    value: 'https://localhost:5053'
+  - key: yarb_url
+    value: 'https://localhost:5054'

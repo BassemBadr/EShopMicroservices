@@ -1,0 +1,4 @@
+$kind: http-request
+url: "{{ordering_url}}/orders/customer/189dc8dc-990f-48e0-a37b-e6f2b60b9d7d"
+method: GET
+order: 4000

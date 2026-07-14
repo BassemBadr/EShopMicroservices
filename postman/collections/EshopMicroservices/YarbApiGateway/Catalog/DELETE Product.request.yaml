@@ -1,0 +1,4 @@
+$kind: http-request
+url: "{{yarb_url}}/catalog-service/products/019bc96d-1daf-42f3-8e41-3935bf99ae08"
+method: DELETE
+order: 6000

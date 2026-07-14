@@ -1,0 +1,97 @@
+$kind: http-request
+url: "{{ordering_url}}/orders"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \    \"Order\": {\r
+
+    \        \"customerId\": \"58c49479-ec65-4de2-86e7-033c546291aa\",\r
+
+    \        \"orderName\": \"ORD_4\",\r
+
+    \        \"shippingAddress\": {\r
+
+    \            \"firstName\": \"mehmet\",\r
+
+    \            \"lastName\": \"ozkaya\",\r
+
+    \            \"emailAddress\": \"mehmet@gmail.com\",\r
+
+    \            \"addressLine\": \"Bahcelievler No:4\",\r
+
+    \            \"country\": \"Turkey\",\r
+
+    \            \"state\": \"Istanbul\",\r
+
+    \            \"zipCode\": \"38050\"\r
+
+    \        },\r
+
+    \        \"billingAddress\": {\r
+
+    \            \"firstName\": \"mehmet\",\r
+
+    \            \"lastName\": \"ozkaya\",\r
+
+    \            \"emailAddress\": \"mehmet@gmail.com\",\r
+
+    \            \"addressLine\": \"Bahcelievler No:4\",\r
+
+    \            \"country\": \"Turkey\",\r
+
+    \            \"state\": \"Istanbul\",\r
+
+    \            \"zipCode\": \"38050\"\r
+
+    \        },\r
+
+    \        \"payment\": {\r
+
+    \            \"cardName\": \"mehmet\",\r
+
+    \            \"cardNumber\": \"5555555555554444\",\r
+
+    \            \"expiration\": \"12/28\",\r
+
+    \            \"cvv\": \"355\",\r
+
+    \            \"paymentMethod\": 1\r
+
+    \        },\r
+
+    \        \"status\": 2,\r
+
+    \        \"orderItems\": [\r
+
+    \            {\r
+
+    \                \"orderId\": \"cc51fc43-5898-432f-bd91-2a6ee5351cc1\",\r
+
+    \                \"productId\": \"5334c996-8457-4cf0-815c-ed2b77c4ff61\",\r
+
+    \                \"quantity\": 2,\r
+
+    \                \"price\": 500.0\r
+
+    \            },\r
+
+    \            {\r
+
+    \                \"orderId\": \"cc51fc43-5898-432f-bd91-2a6ee5351cc1\",\r
+
+    \                \"productId\": \"c67d6323-e8b1-4bdf-9a75-b0d0d2e7e914\",\r
+
+    \                \"quantity\": 1,\r
+
+    \                \"price\": 400.0\r
+
+    \            }\r
+
+    \        ]\r
+
+    \    }\r
+
+    }"
+order: 1000

@@ -1,0 +1,10 @@
+name: Docker
+values:
+  - key: catalog_url
+    value: 'https://localhost:6060'
+  - key: basket_url
+    value: 'https://localhost:6061'
+  - key: ordering_url
+    value: 'https://localhost:6063'
+  - key: yarb_url
+    value: 'https://localhost:6064'

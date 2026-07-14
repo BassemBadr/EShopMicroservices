@@ -1,0 +1,4 @@
+$kind: http-request
+url: "{{yarb_url}}/ordering-service/orders/customer/58c49479-ec65-4de2-86e7-033c546291aa"
+method: GET
+order: 3000

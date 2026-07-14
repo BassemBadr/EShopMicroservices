@@ -1,0 +1,43 @@
+$kind: http-request
+url: "{{yarb_url}}/basket-service/basket/checkout"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \    \"BasketCheckoutDto\": {\r
+
+    \        \"userName\": \"swn\",\r
+
+    \        \"customerId\": \"189dc8dc-990f-48e0-a37b-e6f2b60b9d7d\",\r
+
+    \        \"totalPrice\": 0,\r
+
+    \        \"firstName\": \"swn\",\r
+
+    \        \"lastName\": \"swn\",\r
+
+    \        \"emailAddress\": \"test@test.com\",\r
+
+    \        \"addressLine\": \"34 charles street\",\r
+
+    \        \"country\": \"USA\",\r
+
+    \        \"state\": \"Michigan\",\r
+
+    \        \"zipCode\": \"48189\",\r
+
+    \        \"cardName\": \"swn\",\r
+
+    \        \"cardNumber\": \"485-3184\",\r
+
+    \        \"expiration\": \"11/30\",\r
+
+    \        \"cvv\": \"333\",\r
+
+    \        \"paymentMethod\": 1\r
+
+    \    }\r
+
+    }"
+order: 4000

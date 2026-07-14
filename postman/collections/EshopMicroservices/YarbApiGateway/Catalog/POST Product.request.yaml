@@ -1,0 +1,19 @@
+$kind: http-request
+url: "{{yarb_url}}/catalog-service/products"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \    \"Name\":\"New Product A - testProd docker\",\r
+
+    \    \"Category\":[\"c1\",\"c2\"],\r
+
+    \    \"Description\":\"Description Product A\",\r
+
+    \    \"ImageFile\":\"ImageFile Product A\",\r
+
+    \    \"Price\":199\r
+
+    }"
+order: 5000
