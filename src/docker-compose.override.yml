@@ -1,4 +1,14 @@
 services:
+
+  identitydb:
+    container_name: identitydb
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Strong@Passw0rd
+    restart: always
+    ports:
+      - "1436:1433"
+
   catalogdb:
     container_name: catalogdb
     environment:

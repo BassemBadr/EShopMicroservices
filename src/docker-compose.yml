@@ -1,4 +1,8 @@
 services:
+
+  identitydb:
+    image: mcr.microsoft.com/mssql/server:2025-latest
+
   catalogdb:
     image: postgres:18
 
