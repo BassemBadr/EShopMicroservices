@@ -1,4 +1,3 @@
-using IdentityServer.Config;
 using IdentityServer.Data;
 using IdentityServer.Models;
 using Microsoft.AspNetCore.Identity;
@@ -34,9 +33,22 @@ builder.Services.AddIdentityServer(options =>
     options.Events.RaiseFailureEvents = true;
     options.Events.RaiseErrorEvents = true;
 })
-.AddInMemoryIdentityResources(IdentityServerConfig.IdentityResources)
-.AddInMemoryApiScopes(IdentityServerConfig.ApiScopes)
-.AddInMemoryClients(IdentityServerConfig.Clients)
+// Configuration store: clients, API scopes, identity resources -> SQL Server
+.AddConfigurationStore(options =>
+{
+    options.ConfigureDbContext = b => b.UseSqlServer(connectionString,
+        sql => sql.MigrationsAssembly(typeof(Program).Assembly.FullName));
+})
+// Operational store: refresh tokens, persisted grants, sessions -> SQL Server
+.AddOperationalStore(options =>
+{
+    options.ConfigureDbContext = b => b.UseSqlServer(connectionString,
+        sql => sql.MigrationsAssembly(typeof(Program).Assembly.FullName));
+
+    // Cleanup expired grants/refresh tokens every hour (like a janitor)
+    options.EnableTokenCleanup = true;
+    options.TokenCleanupInterval = 3600;
+})
 .AddAspNetIdentity<ApplicationUser>()
 .AddDeveloperSigningCredential();   //TODO: DEV ONLY — replace with certificate in production
 
@@ -47,14 +59,7 @@ var app = builder.Build();
 //  confgure the HTTP request pipeline
 
 // ---- 5. Database: apply migrations automatically on startup (dev convenience)
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    db.Database.Migrate();   // creates IdentityDb if missing, applies migrations
-
-    // ---- 6. Seed admin user + roles (dev convenience)
-    await SeedData.EnsureSeedData(scope.ServiceProvider);
-}
+await IdentityServerDbInitializer.InitializeAsync(app.Services);
 
 app.UseStaticFiles();
 app.UseRouting();
