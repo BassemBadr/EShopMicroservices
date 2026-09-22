@@ -51,6 +51,9 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     db.Database.Migrate();   // creates IdentityDb if missing, applies migrations
+
+    // ---- 6. Seed admin user + roles (dev convenience)
+    await SeedData.EnsureSeedData(scope.ServiceProvider);
 }
 
 app.UseStaticFiles();
