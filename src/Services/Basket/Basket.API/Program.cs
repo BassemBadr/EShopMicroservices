@@ -1,7 +1,8 @@
+using BuildingBlocks.Authentication;
+using BuildingBlocks.Messaging.MassTransit;
 using Discount.Grpc.Protos;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using BuildingBlocks.Messaging.MassTransit;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,8 @@ builder.Services.AddMediatR(config =>
     config.AddOpenBehavior(typeof(LoggingBehavior<,>));
 });
 
+builder.Services.AddIdentityServerAuthentication(builder.Configuration);
+
 //  Data Services
 builder.Services.AddMarten(opts =>
 {
@@ -24,6 +27,7 @@ builder.Services.AddMarten(opts =>
     opts.Schema.For<ShoppingCart>().Identity(x => x.UserName);
     opts.DisableNpgsqlLogging = true;
 }).UseLightweightSessions();
+
 
 builder.Services.AddScoped<IBasketRepository, BasketRepository>();
 builder.Services.Decorate<IBasketRepository, CachedBasketRepository>();
@@ -75,11 +79,14 @@ var app = builder.Build();
 
 // configure the HTTP request pipeline
 app.MapCarter();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.UseExceptionHandler(options => { });
-app.UseHealthChecks("/health",
-    new HealthCheckOptions
-    {
-        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-    });
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+}).AllowAnonymous();
 
 app.Run();

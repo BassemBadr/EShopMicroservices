@@ -1,3 +1,4 @@
+using BuildingBlocks.Authentication;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
@@ -15,6 +16,8 @@ builder.Services.AddMediatR(config =>
 builder.Services.AddValidatorsFromAssembly(assembly);
 
 builder.Services.AddCarter(new DependencyContextAssemblyCatalog([assembly]));
+
+builder.Services.AddIdentityServerAuthentication(builder.Configuration);
 
 builder.Services.AddMarten(opts =>
 {
@@ -35,11 +38,14 @@ var app = builder.Build();
 //  Configure the http request pipeline
 app.MapCarter();
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.UseExceptionHandler(options => { });
 
-app.UseHealthChecks("/health", new HealthCheckOptions
+app.MapHealthChecks("/health", new HealthCheckOptions
 {
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-});
+}).AllowAnonymous();
 
 app.Run();

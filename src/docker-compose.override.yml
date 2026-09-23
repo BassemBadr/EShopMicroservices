@@ -77,6 +77,7 @@ services:
       - MessageBroker__Host=amqp://ecommerce-mq:5672
       - MessageBroker__UserName=guest
       - MessageBroker__Password=guest
+      - IdentityServer__Authority=http://identityserver:8080
     depends_on:
       - basketdb 
       - distributedcache
@@ -97,6 +98,7 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
       - ConnectionStrings__Database=Server=catalogdb;Port=5432;Database=CatalogDb;User Id=postgres;Password=postgres;Include Error Detail=true
+      - IdentityServer__Authority=http://identityserver:8080
     depends_on:
       - catalogdb 
     ports:
@@ -114,6 +116,7 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
       - ConnectionStrings__Database=Data Source=/app/files/discountdb.db
+      - IdentityServer__Authority=http://identityserver:8080
     ports:
       - "6002:8080"
       - "6062:8081"
@@ -133,6 +136,7 @@ services:
       - MessageBroker__UserName=guest
       - MessageBroker__Password=guest
       - FeatureManagement__OrderFullfilment=false
+      - IdentityServer__Authority=http://identityserver:8080
     depends_on:
       - orderdb
       - messagebroker
