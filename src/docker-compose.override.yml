@@ -2,12 +2,19 @@ services:
 
   identitydb:
     container_name: identitydb
+    # Docker Desktop (Windows) named volumes are root-owned & not writable by the
+    # non-root 'mssql' user -> "Access is denied copying master.mdf" on first init.
+    # Starting as root lets the image entrypoint chown /var/opt/mssql for mssql,
+    # then it drops privileges to the mssql user before running sqlservr.
+    user: "0:0"
     environment:
       - ACCEPT_EULA=Y
       - MSSQL_SA_PASSWORD=Strong@Passw0rd
     restart: always
     ports:
       - "1436:1433"
+    volumes:
+      - mssql_identity:/var/opt/mssql/data
 
   catalogdb:
     container_name: catalogdb
@@ -167,6 +174,23 @@ services:
     ports:
       - "6005:8080"
       - "6065:8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+  identityserver:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ConnectionStrings__IdentityDb=Server=identitydb;database=IdentityDb;User Id=sa;Password=Strong@Passw0rd;Encrypt=False;TrustServerCertificate=True
+    depends_on:
+      - identitydb
+    ports:
+      - "6006:8080"
+      - "6066:8081"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro

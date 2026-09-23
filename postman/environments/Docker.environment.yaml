@@ -8,3 +8,5 @@ values:
     value: 'https://localhost:6063'
   - key: yarb_url
     value: 'https://localhost:6064'
+  - key: identityserver_url
+    value: ''

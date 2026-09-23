@@ -1,0 +1,19 @@
+$kind: http-request
+url: "{{identityserver_url}}/connect/token"
+method: POST
+headers:
+  Content-Type: application/x-www-form-urlencoded
+body:
+  type: urlencoded
+  content:
+    grant_type: client_credentials
+    client_id: yarp-gateway
+    client_secret: gateway-secret
+    scope: catalog-api basket-api ordering-api discount-api
+scripts:
+  - type: afterResponse
+    code: "var jsonData = pm.response.json();\r
+
+      pm.environment.set(\"client-token\", jsonData.access_token);"
+    language: text/javascript
+order: 1790072925430

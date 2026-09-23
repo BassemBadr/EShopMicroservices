@@ -8,3 +8,7 @@ values:
     value: 'https://localhost:5053'
   - key: yarb_url
     value: 'https://localhost:5054'
+  - key: identityserver_url
+    value: ''
+  - key: client-token
+    secret: true
