@@ -6,7 +6,7 @@ namespace Shopping.Web.Pages
 {
     public class LogoutModel : PageModel
     {
-        public async Task<IActionResult> OnGet()
+        public IActionResult OnGet()
         {
             return SignOut(
         new AuthenticationProperties { RedirectUri = "/" },
