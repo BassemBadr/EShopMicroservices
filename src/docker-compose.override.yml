@@ -192,6 +192,7 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
       - ConnectionStrings__IdentityDb=Server=identitydb;database=IdentityDb;User Id=sa;Password=Strong@Passw0rd;Encrypt=False;TrustServerCertificate=True      
+      - IdentityServer__IssuerUri=http://identityserver:8080
     depends_on:
       - identitydb
     ports:

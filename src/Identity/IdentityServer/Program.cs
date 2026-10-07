@@ -27,6 +27,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 builder.Services.AddIdentityServer(options =>
 {
     options.EmitStaticAudienceClaim = true;
+    options.IssuerUri= builder.Configuration["IdentityServer:IssuerUri"];
 
     // Useful events for debugging during learning
     options.Events.RaiseSuccessEvents = true;
