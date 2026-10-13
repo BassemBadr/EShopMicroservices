@@ -1,0 +1,16 @@
+$kind: grpc-request
+url: grpc://localhost:5052
+methodPath: discount.DiscountProtoService.GetDiscount
+methodDescriptor: CooCCg5kaXNjb3VudC5wcm90bxIIZGlzY291bnQiLQoSR2V0RGlzY291bnRSZXF1ZXN0EhcKC3Byb2R1Y3ROYW1lGAEgASgJQgIQASJjCgtDb3Vwb25Nb2RlbBIOCgJpZBgBIAEoBUICEAESFwoLcHJvZHVjdE5hbWUYAiABKAlCAhABEhcKC2Rlc2NyaXB0aW9uGAMgASgJQgIQARISCgZhbW91bnQYBCABKAVCAhABMloKFERpc2NvdW50UHJvdG9TZXJ2aWNlEkIKC0dldERpc2NvdW50EhwuZGlzY291
+message:
+  content: "{\r
+
+    \    \"productName\": \"IPhone X\"\r
+
+    }"
+settings:
+  secureConnection: true
+schema:
+  source: file
+  location: /D:/WorkSpace/Personal-Workspace/EShopMicroservicesRepo/src/Services/Discount/Discount.Grpc/Protos/discount.proto
+order: 1000

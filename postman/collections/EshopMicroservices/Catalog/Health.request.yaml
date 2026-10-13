@@ -1,0 +1,4 @@
+$kind: http-request
+url: "{{catalog_url}}/health"
+method: GET
+order: 7000

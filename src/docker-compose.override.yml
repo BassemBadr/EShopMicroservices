@@ -1,4 +1,21 @@
 services:
+
+  identitydb:
+    container_name: identitydb
+    # Docker Desktop (Windows) named volumes are root-owned & not writable by the
+    # non-root 'mssql' user -> "Access is denied copying master.mdf" on first init.
+    # Starting as root lets the image entrypoint chown /var/opt/mssql for mssql,
+    # then it drops privileges to the mssql user before running sqlservr.
+    user: "0:0"
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Strong@Passw0rd
+    restart: always
+    ports:
+      - "1436:1433"
+    volumes:
+      - mssql_identity:/var/opt/mssql/data
+
   catalogdb:
     container_name: catalogdb
     environment:
@@ -60,6 +77,7 @@ services:
       - MessageBroker__Host=amqp://ecommerce-mq:5672
       - MessageBroker__UserName=guest
       - MessageBroker__Password=guest
+      - IdentityServer__Authority=http://identityserver:8080
     depends_on:
       - basketdb 
       - distributedcache
@@ -80,6 +98,7 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
       - ConnectionStrings__Database=Server=catalogdb;Port=5432;Database=CatalogDb;User Id=postgres;Password=postgres;Include Error Detail=true
+      - IdentityServer__Authority=http://identityserver:8080
     depends_on:
       - catalogdb 
     ports:
@@ -97,6 +116,7 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
       - ConnectionStrings__Database=Data Source=/app/files/discountdb.db
+      - IdentityServer__Authority=http://identityserver:8080
     ports:
       - "6002:8080"
       - "6062:8081"
@@ -116,12 +136,69 @@ services:
       - MessageBroker__UserName=guest
       - MessageBroker__Password=guest
       - FeatureManagement__OrderFullfilment=false
+      - IdentityServer__Authority=http://identityserver:8080
     depends_on:
       - orderdb
       - messagebroker
     ports:
       - "6003:8080"
       - "6063:8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+  yarpapigateway:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+    depends_on:
+      - catalog.api
+      - basket.api      
+      - ordering.api
+    ports:
+      - "6004:8080"
+      - "6064:8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+  shopping.web:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ApiSettings__GatewayAddress=http://yarpapigateway:8080
+      - IdentityServer__Authority=http://identityserver:8080
+      - IdentityServer__PublicAuthority=https://localhost:6066
+    depends_on:
+      - yarpapigateway
+      - identityserver
+    ports:
+      - "6005:8080"
+      - "6065:8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+  identityserver:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ConnectionStrings__IdentityDb=Server=identitydb;database=IdentityDb;User Id=sa;Password=Strong@Passw0rd;Encrypt=False;TrustServerCertificate=True      
+      - IdentityServer__IssuerUri=http://identityserver:8080
+    depends_on:
+      - identitydb
+    ports:
+      - "6006:8080"
+      - "6066:8081"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro

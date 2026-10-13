@@ -1,0 +1,47 @@
+$kind: http-request
+url: "{{yarb_url}}/basket-service/basket"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \    \"cart\": {\r
+
+    \        \"userName\": \"swn\",\r
+
+    \        \"items\": [\r
+
+    \            {\r
+
+    \                \"quantity\": 2,\r
+
+    \                \"color\": \"Red\",\r
+
+    \                \"price\": 500,\r
+
+    \                \"productId\": \"4f136e9f-ff8c-4c1f-9a33-d12f689bdab8\",\r
+
+    \                \"productName\": \"Samsung 10\"\r
+
+    \            },\r
+
+    \            {\r
+
+    \                \"quantity\": 1,\r
+
+    \                \"color\": \"blue\",\r
+
+    \                \"price\": 500,\r
+
+    \                \"productId\": \"5334c996-8457-4cf0-815c-ed2b77c4ff61\",\r
+
+    \                \"productName\": \"IPhone X\"\r
+
+    \            }\r
+
+    \        ]\r
+
+    \    }\r
+
+    }"
+order: 2000

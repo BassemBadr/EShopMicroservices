@@ -1,4 +1,8 @@
 services:
+
+  identitydb:
+    image: mcr.microsoft.com/mssql/server:2025-latest
+
   catalogdb:
     image: postgres:18
 
@@ -40,10 +44,26 @@ services:
       context: .
       dockerfile: Services/Ordering/Ordering.API/Dockerfile
 
+  yarpapigateway:
+    image: ${DOCKER_REGISTRY-}yarpapigateway
+    build:
+      context: .
+      dockerfile: ApiGateways/YarpApiGateway/Dockerfile
+
+  shopping.web:
+    image: ${DOCKER_REGISTRY-}shoppingweb
+    build:
+      context: .
+      dockerfile: WebApps/Shopping.Web/Dockerfile
+
+  identityserver:
+    image: ${DOCKER_REGISTRY-}identityserver
+    build:
+      context: .
+      dockerfile: Identity/IdentityServer/Dockerfile
+
 volumes:
   postgres_catalog:
   postgres_basket:
   discount-sqlite-data:
-
-
-
+  mssql_identity:

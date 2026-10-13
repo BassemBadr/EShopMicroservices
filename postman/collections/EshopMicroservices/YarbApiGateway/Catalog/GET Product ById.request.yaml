@@ -1,0 +1,4 @@
+$kind: http-request
+url: "{{yarb_url}}/catalog-service/products/5334c996-8457-4cf0-815c-ed2b77c4ff61"
+method: GET
+order: 2000

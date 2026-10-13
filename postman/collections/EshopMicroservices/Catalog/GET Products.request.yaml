@@ -1,0 +1,10 @@
+$kind: http-request
+url: "{{catalog_url}}/products?pageNumber=1&pageSize=10"
+method: GET
+queryParams:
+  pageNumber: "1"
+  pageSize: "10"
+body:
+  type: json
+  content: ""
+order: 1000

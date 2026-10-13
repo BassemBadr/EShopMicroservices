@@ -1,0 +1,7 @@
+$kind: http-request
+url: "{{yarb_url}}/catalog-service/products?pageNumber=1&pageSize=10"
+method: GET
+queryParams:
+  pageNumber: "1"
+  pageSize: "10"
+order: 1000
