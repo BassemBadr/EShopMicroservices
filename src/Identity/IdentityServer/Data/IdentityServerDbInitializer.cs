@@ -11,6 +11,8 @@ public static class IdentityServerDbInitializer
     {
         using var scope = services.CreateScope();
 
+        var env = scope.ServiceProvider.GetRequiredService<IHostEnvironment>();
+
         // 1. User store (existing)
         var identityDb = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         await identityDb.Database.MigrateAsync();
@@ -18,7 +20,7 @@ public static class IdentityServerDbInitializer
         // 2. Configuration store (clients/scopes/resources)
         var configDb = scope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
         await configDb.Database.MigrateAsync();
-        await SeedConfigurationAsync(configDb);
+        await SeedConfigurationAsync(configDb,env.IsDevelopment());
 
         // 3. Operational store (grants/refresh tokens)
         var persistedDb = scope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>();
@@ -28,8 +30,18 @@ public static class IdentityServerDbInitializer
         await SeedData.EnsureSeedData(services);
     }
 
-    private static async Task SeedConfigurationAsync(ConfigurationDbContext context)
+    private static async Task SeedConfigurationAsync(ConfigurationDbContext context,bool resetInDev)
     {
+        if (resetInDev)
+        {
+            // Development: the C# config classes are the source of truth.
+            // Fall through to the empty checks below and insert fresh rows.
+            context.Clients.RemoveRange(context.Clients);
+            context.IdentityResources.RemoveRange(context.IdentityResources);
+            context.ApiScopes.RemoveRange(context.ApiScopes);
+            await context.SaveChangesAsync();
+        }
+
         // Only seed if the tables are empty (idempotent — safe on every startup)
         if (!context.Clients.Any())
         {

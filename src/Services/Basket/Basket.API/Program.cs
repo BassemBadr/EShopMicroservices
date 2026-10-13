@@ -51,18 +51,32 @@ builder.Services.AddScoped<IBasketRepository, CachedBasketRepository>(
 */
 
 //  Grpc Services
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(options =>
 {
     options.Address = new Uri(builder.Configuration["GrpcSettings:DiscountUrl"]!);
-}).ConfigurePrimaryHttpMessageHandler(() =>
+})
+.AddCallCredentials(async (context, metadata, provider) =>
+{
+    var httpContext = provider.GetRequiredService<IHttpContextAccessor>()?.HttpContext;
+    if (httpContext is not null)
     {
-        var handler = new HttpClientHandler
-        {
-            ServerCertificateCustomValidationCallback =
-            HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-        };
-        return handler;
-    });
+        var authorization = httpContext.Request.Headers.Authorization.ToString();
+        if (!string.IsNullOrEmpty(authorization))
+            metadata.Add("authorization", authorization);
+        await Task.CompletedTask;
+    }
+})
+.ConfigurePrimaryHttpMessageHandler(() =>
+{
+    var handler = new HttpClientHandler
+    {
+        ServerCertificateCustomValidationCallback =
+        HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+    };
+    return handler;
+});
 
 //Async Communication Services
 builder.Services.AddMessageBroker(builder.Configuration);

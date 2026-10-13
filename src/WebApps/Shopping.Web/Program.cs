@@ -37,6 +37,7 @@ builder.Services.AddAuthentication(options =>
 .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
 {
     options.Authority = builder.Configuration["IdentityServer:Authority"];
+    options.RequireHttpsMetadata = false;
     options.ClientId = "shopping-web";
     // shopping-web is a PUBLIC client (RequireClientSecret=false, PKCE):
     // do NOT set ClientSecret here — IdentityServer rejects secrets on public clients.
@@ -56,6 +57,24 @@ builder.Services.AddAuthentication(options =>
     {
         NameClaimType = "name",
         RoleClaimType = "role"
+    };
+
+    var publicAuthority = builder.Configuration["IdentityServer:PublicAuthority"]
+    ?? builder.Configuration["IdentityServer:Authority"]!;
+    options.Events=new OpenIdConnectEvents
+    {
+        OnRedirectToIdentityProvider = context =>
+        {
+            // Add extra parameters to the authorize request
+            context.ProtocolMessage.IssuerAddress = $"{publicAuthority}/connect/authorize";
+            return Task.CompletedTask;
+        },
+        OnRedirectToIdentityProviderForSignOut = context =>
+        {
+            // Add extra parameters to the logout request
+            context.ProtocolMessage.IssuerAddress = $"{publicAuthority}/connect/endsession";
+            return Task.CompletedTask;
+        }
     };
 });
 

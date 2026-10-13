@@ -37,9 +37,14 @@ public class IdentityServerConfig
                 RequirePkce = true,
                 RequireClientSecret = false,          // public client (SaaS/Razor web app)
                 //  redirect urls are meant to be changed from database or admin page later on based on environment, but for now we hardcode them for local development
-                RedirectUris = { "https://localhost:5055/signin-oidc" },
-                PostLogoutRedirectUris = { "https://localhost:5055/signout-callback-oidc" },
-
+                RedirectUris = { 
+                    "https://localhost:5055/signin-oidc",
+                    "https://localhost:6065/signin-oidc",
+                },
+                PostLogoutRedirectUris = { 
+                    "https://localhost:5055/signout-callback-oidc",
+                    "https://localhost:6065/signout-callback-oidc", 
+                },
                 AllowedScopes =
                 {
                     IdentityServerConstants.StandardScopes.OpenId,
