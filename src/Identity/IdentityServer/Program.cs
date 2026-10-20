@@ -1,5 +1,7 @@
+using HealthChecks.UI.Client;
 using IdentityServer.Data;
 using IdentityServer.Models;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -56,6 +58,9 @@ builder.Services.AddIdentityServer(options =>
 // ---- 4. UI (login / consent pages)
 builder.Services.AddRazorPages();
 
+builder.Services.AddHealthChecks()
+    .AddSqlServer(connectionString);
+
 var app = builder.Build();
 //  confgure the HTTP request pipeline
 
@@ -67,5 +72,9 @@ app.UseRouting();
 app.UseIdentityServer();   // adds the /connect/* and /.well-known/* endpoints
 app.UseAuthorization();
 app.MapRazorPages();
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+}).AllowAnonymous();
 
 app.Run();

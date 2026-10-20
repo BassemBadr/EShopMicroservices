@@ -26,7 +26,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_catalog:/var/lib/postgresql/data/18/
+      - postgres_catalog:/var/lib/postgresql
 
   basketdb:
     container_name: basketdb
@@ -38,7 +38,7 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - postgres_basket:/var/lib/postgresql/data/18/
+      - postgres_basket:/var/lib/postgresql
 
   distributedcache:
     container_name: distributedcache
@@ -79,10 +79,14 @@ services:
       - MessageBroker__Password=guest
       - IdentityServer__Authority=http://identityserver:8080
     depends_on:
-      - basketdb 
-      - distributedcache
-      - discount.grpc
-      - messagebroker
+      basketdb:
+        condition: service_healthy
+      distributedcache:
+        condition: service_started
+      discount.grpc:
+        condition: service_started
+      messagebroker:
+        condition: service_started
     ports:
       - "6001:8080"
       - "6061:8081"
@@ -100,7 +104,8 @@ services:
       - ConnectionStrings__Database=Server=catalogdb;Port=5432;Database=CatalogDb;User Id=postgres;Password=postgres;Include Error Detail=true
       - IdentityServer__Authority=http://identityserver:8080
     depends_on:
-      - catalogdb 
+      catalogdb:
+        condition: service_healthy
     ports:
       - "6000:8080"
       - "6060:8081"
@@ -158,6 +163,7 @@ services:
       - catalog.api
       - basket.api      
       - ordering.api
+      - identityserver
     ports:
       - "6004:8080"
       - "6064:8081"
