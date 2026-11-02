@@ -27,7 +27,8 @@ namespace Shopping.Web.Pages
 
             var basket = await basketService.LoadUserBasket();
 
-            //TODO: check product if exist increase quantity if not add new line
+            // The basket API folds a repeated product into the existing line and adds the quantity,
+            // so the page only has to append the line it wants.
             basket.Items.Add(new ShoppingCartItemModel
             {
                 ProductId = productId,

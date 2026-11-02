@@ -25,6 +25,9 @@ internal class StoreBasketCommandHandler
         // The basket always belongs to the caller — never to a name supplied in the body.
         command.Cart.UserName = userContext.RequireUserKey();
 
+        // One line per product: adding the same product again only raises its quantity.
+        command.Cart.MergeDuplicateItems();
+
         var storedCart = await LoadStoredCart(command.Cart.UserName, cancellationToken);
 
         await DeductDiscount(command.Cart, storedCart, cancellationToken);
