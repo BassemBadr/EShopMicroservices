@@ -20,18 +20,32 @@ public sealed class HttpUserContext(IHttpContextAccessor httpContextAccessor) : 
 
     private ClaimsPrincipal? Principal => httpContextAccessor.HttpContext?.User;
 
+    // Set by ActAs() for background work that has no request of its own.
+    private ActingUser? actingUser;
+
+    private sealed record ActingUser(string UserKey, string? SubjectId, Guid? UserId);
+
     public bool IsAuthenticated => Principal?.Identity?.IsAuthenticated == true;
 
-    public string? SubjectId => Find(SubjectClaim, ClaimTypes.NameIdentifier);
+    public string? SubjectId => actingUser?.SubjectId ?? Find(SubjectClaim, ClaimTypes.NameIdentifier);
 
-    public Guid? UserId => Guid.TryParse(SubjectId, out var userId) ? userId : null;
+    public Guid? UserId => actingUser?.UserId ?? (Guid.TryParse(SubjectId, out var userId) ? userId : null);
 
     public string? ClientId => Find(ClientIdClaim);
 
     public string? UserKey =>
-        SubjectId ?? (ClientId is { Length: > 0 } clientId ? $"client:{clientId}" : null);
+        actingUser?.UserKey ?? SubjectId ?? (ClientId is { Length: > 0 } clientId ? $"client:{clientId}" : null);
 
-    public string UserName => Find(NameClaim, ClaimTypes.Name) ?? UserKey ?? "anonymous";
+    public string UserName => actingUser is null
+        ? Find(NameClaim, ClaimTypes.Name) ?? UserKey ?? "anonymous"
+        : actingUser.SubjectId ?? actingUser.UserKey;
+
+    public void ActAs(string userKey, Guid? userId = null)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(userKey);
+
+        actingUser = new ActingUser(userKey, userId?.ToString(), userId);
+    }
 
     public IReadOnlyCollection<string> Roles
     {

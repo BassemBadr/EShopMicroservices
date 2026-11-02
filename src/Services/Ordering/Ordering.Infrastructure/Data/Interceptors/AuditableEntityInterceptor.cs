@@ -24,9 +24,9 @@ public class AuditableEntityInterceptor(IUserContext userContext) : SaveChangesI
     {
         if (context == null) return;
 
-        // The author is whoever the validated token says it is. Background work (a MassTransit
-        // consumer, a migration) has no HTTP request, so it is recorded as "system" rather than
-        // pretending to be a person.
+        // The author is whoever the validated token says it is. Work that has no HTTP request
+        // (a MassTransit consumer) declares its caller through IUserContext.ActAs; anything that
+        // names nobody at all — a migration, a seeder — is honestly recorded as "system".
         var author = userContext.UserKey ?? "system";
 
         foreach (var entry in context.ChangeTracker.Entries<IEntity>())

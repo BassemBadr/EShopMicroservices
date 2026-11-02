@@ -34,4 +34,14 @@ public interface IUserContext
     IReadOnlyCollection<string> Roles { get; }
 
     bool IsInRole(string role);
+
+    /// <summary>
+    /// Declares who the rest of this scope is acting for. Needed by background work: a MassTransit
+    /// consumer has no <c>HttpContext</c>, so without this the audit columns would record
+    /// <c>"system"</c> even though the work was triggered by a real user. Only the identity keys
+    /// change; <see cref="IsAuthenticated"/> and <see cref="Roles"/> keep describing the request.
+    /// </summary>
+    /// <param name="userKey">The <see cref="UserKey"/> the original caller had.</param>
+    /// <param name="userId">The original caller's <see cref="UserId"/>, when it is a user token.</param>
+    void ActAs(string userKey, Guid? userId = null);
 }

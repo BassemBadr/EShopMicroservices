@@ -1,4 +1,5 @@
-﻿global using BuildingBlocks.CQRS;
+﻿global using BuildingBlocks.Authentication;
+global using BuildingBlocks.CQRS;
 global using MediatR;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.Logging;

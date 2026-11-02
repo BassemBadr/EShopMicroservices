@@ -6,13 +6,17 @@ using Ordering.Domain.Enums;
 namespace Ordering.Application.Orders.EventHandlers.Integration;
 
 public class BasketCheckoutEventHandler
-    (ISender sender, IApplicationDbContext dbContext, ILogger<BasketCheckoutEventHandler> logger)
+    (ISender sender, IApplicationDbContext dbContext, IUserContext userContext, ILogger<BasketCheckoutEventHandler> logger)
     : IConsumer<BasketCheckoutEvent>
 {
     public async Task Consume(ConsumeContext<BasketCheckoutEvent> context)
     {
         //TODO: Create new order and start order fullfillment process
         logger.LogInformation("Integration event handled: {IntegrationEvent}", context.Message.GetType().Name);
+
+        // A consumer runs without an HttpContext, so it declares who the message was sent for.
+        // Without this the audit interceptor has no caller to name and every order is "system".
+        userContext.ActAs(context.Message.UserName, context.Message.CustomerId);
 
         await EnsureCustomerExistsAsync(context.Message, context.CancellationToken);
 
