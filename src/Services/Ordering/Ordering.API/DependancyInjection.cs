@@ -16,6 +16,7 @@ public static class DependancyInjection
             .AddSqlServer(configuration.GetConnectionString("Database")!);
 
         services.AddIdentityServerAuthentication(configuration);
+        services.AddUserContext();   // audit columns and order ownership come from the token
 
         return services;
     }

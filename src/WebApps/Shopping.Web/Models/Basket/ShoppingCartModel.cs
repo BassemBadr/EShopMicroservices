@@ -2,6 +2,7 @@
 
 public class ShoppingCartModel
 {
+    // Populated by the basket API only; the client never sends it.
     public string UserName { get; set; } = default!;
     public List<ShoppingCartItemModel> Items { get; set; } = new();
     public decimal TotalPrice => Items.Sum(a => a.Price * a.Quantity);

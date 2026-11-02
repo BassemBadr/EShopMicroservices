@@ -74,19 +74,6 @@
                 </div>
 
                 <div class="mb-3">
-                    <label asp-for="Order.UserName" for="username">Username</label>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">@@</span>
-                        </div>
-                        <input asp-for="Order.UserName" type="text" class="form-control" id="username" placeholder="" value="" required>
-                        <div class="invalid-feedback" style="width: 100%;">
-                            Your username is required.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mb-3">
                     <label asp-for="Order.EmailAddress" for="email">Email <span class="text-muted">(Optional)</span></label>
                     <input asp-for="Order.EmailAddress" type="email" class="form-control" id="email" placeholder="you@example.com">
                     <div class="invalid-feedback">
@@ -150,17 +137,21 @@
                 <h4 class="mb-3">Payment</h4>
 
                 <div class="d-block my-3">
+                    @* PaymentMethod is an int on the wire (see Payment.Of): 1 = Credit card, 2 = Debit card, 3 = Paypal.
+                       asp-for already emits name="Order.PaymentMethod" — an explicit name= would override it and
+                       leave the property unbound. The checked state comes from the model, so one plain <label>
+                       per radio is used instead of asp-for (which would emit the same for= three times). *@
                     <div class="custom-control custom-radio">
-                        <input asp-for="Order.PaymentMethod" id="credit" name="paymentMethod" type="radio" value="Credit card" class="custom-control-input" checked required>
-                        <label asp-for="Order.PaymentMethod" class="custom-control-label" for="credit">Credit card</label>
+                        <input asp-for="Order.PaymentMethod" id="credit" type="radio" value="1" class="custom-control-input" required>
+                        <label class="custom-control-label" for="credit">Credit card</label>
                     </div>
                     <div class="custom-control custom-radio">
-                        <input asp-for="Order.PaymentMethod" id="debit" name="paymentMethod" type="radio" value="Debit card" class="custom-control-input" required>
-                        <label asp-for="Order.PaymentMethod" class="custom-control-label" for="debit">Debit card</label>
+                        <input asp-for="Order.PaymentMethod" id="debit" type="radio" value="2" class="custom-control-input" required>
+                        <label class="custom-control-label" for="debit">Debit card</label>
                     </div>
                     <div class="custom-control custom-radio">
-                        <input asp-for="Order.PaymentMethod" id="paypal" name="paymentMethod" type="radio" value="Paypal" class="custom-control-input" required>
-                        <label asp-for="Order.PaymentMethod" class="custom-control-label" for="paypal">Paypal</label>
+                        <input asp-for="Order.PaymentMethod" id="paypal" type="radio" value="3" class="custom-control-input" required>
+                        <label class="custom-control-label" for="paypal">Paypal</label>
                     </div>
                 </div>
                 <div class="row">

@@ -89,11 +89,12 @@ postman/                           # collections + Localhost/Docker environments
 - **Feature flags** with `Microsoft.FeatureManagement` (e.g. `OrderFullfilment` gate on the order-created domain event)
 
 ### Security (Duende IdentityServer 7 — the security track)
-- **OIDC login for Shopping.Web**: authorization code + **PKCE** (public client, no client secret), cookie + OIDC schemes, refresh tokens (`offline_access`), role/name claim mapping, sign-in/sign-out pages
+- **OIDC login for Shopping.Web**: authorization code + **PKCE** (public client, no client secret), cookie + OIDC schemes, refresh tokens (`offline_access`), raw claim types (`sub`/`name`/`role` — `MapInboundClaims = false` on both the web client and the APIs), sign-in/sign-out pages
 - **Token propagation**: `UserAccessTokenHandler` attaches the user's access token to every Refit call through the gateway
 - **Client credentials** machine tokens for the gateway (`yarp-gateway` / `gateway-secret`) — used by tooling/Postman
 - **Gateway token validation**: JwtBearer with `aud = {authority}/resources` (`EmitStaticAudienceClaim`), `X-User-Id` / `X-User-Roles` request transforms
 - **Defense in depth**: every backend service (incl. gRPC) validates JWTs itself through the shared `AddIdentityServerAuthentication` extension, with a **secure-by-default fallback policy** (all endpoints authenticated unless `[AllowAnonymous]`, e.g. `/health`)
+- **Identity comes from the token, never from the request**: `IUserContext` (BuildingBlocks) exposes `sub` / `client_id` / `role` from the validated principal — Basket keys carts by the caller instead of a URL segment, checkout stamps `CustomerId` from the token before publishing, Ordering audits with the token's author, and the order list only shows the signed-in user's orders
 - **gRPC token forwarding**: Basket → Discount calls forward the caller's `Authorization` header via gRPC call credentials
 - **API scopes** `catalog-api`, `basket-api`, `ordering-api`, `discount-api`; identity resources `openid`, `profile`, `email`, `roles`
 - **Duende stores** in SQL Server (`ConfigurationDbContext` / `PersistedGrantDbContext`), idempotent startup seeding, roles `Admin`/`Customer`/`Manager`
@@ -112,7 +113,7 @@ postman/                           # collections + Localhost/Docker environments
 - **YARP** route/cluster/path-transform configuration: `/catalog-service`, `/basket-service`, `/ordering-service` → container destinations
 - **Rate limiting** (`fixed-window-policy`) and per-route authorization policies
 - **Shopping.Web**: catalog browsing (list/detail/category), cart, checkout, order list/confirmation, login/logout — calling the gateway via **Refit** typed `HttpClientFactory` clients
-- Bootstrap 5 storefront with banner carousel and product images
+- Bootstrap 4 storefront (CDN) with banner carousel and product images
 
 ### Cross-cutting & DevOps
 - **Health checks** on Catalog, Basket, Ordering and IdentityServer (`/health`, HealthChecks UI JSON writer) — DB-aware (Npgsql/Redis/SqlServer), always `AllowAnonymous`
@@ -187,6 +188,7 @@ This repo is a **learning project**; security work is treated as planned, in-pro
 - `AddDeveloperSigningCredential()` is **dev-only**; swap for a real certificate/keys before any real deployment. Duende key-management license warnings in logs are benign in dev.
 - IdentityServer seeding is **idempotent (only when tables are empty)** — changing `IdentityServerConfig.cs` won't update an existing DB; re-create the DB to re-seed.
 - Client redirect URIs are hardcoded for local dev (documented in `IdentityServerConfig.cs`).
+- The **seeded demo customers/orders** in `orderdb` use fixed GUIDs (`58c49479…`, `189dc8dc…`), so a freshly signed-in user starts with an **empty order list** — Ordering creates their customer row on first checkout.
 - Seeding/config assumes **local development** — credentials and connection strings in this repo are not production-safe.
 
 ## License

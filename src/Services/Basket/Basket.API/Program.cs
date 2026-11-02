@@ -19,6 +19,7 @@ builder.Services.AddMediatR(config =>
 });
 
 builder.Services.AddIdentityServerAuthentication(builder.Configuration);
+builder.Services.AddUserContext();   // baskets are scoped to the caller's token, not to a URL segment
 
 //  Data Services
 builder.Services.AddMarten(opts =>

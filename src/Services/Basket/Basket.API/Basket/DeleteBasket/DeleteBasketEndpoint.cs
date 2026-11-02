@@ -9,9 +9,10 @@ public class DeleteBasketEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapDelete("/basket/{userName}", async (string userName, ISender sender) =>
+        // No user segment on the route: the owner comes from the validated access token.
+        app.MapDelete("/basket", async (ISender sender) =>
         {
-            var result = await sender.Send(new DeleteBasketCommand(userName));
+            var result = await sender.Send(new DeleteBasketCommand());
 
             var response = result.Adapt<DeleteBasketResponse>();
 
@@ -25,4 +26,3 @@ public class DeleteBasketEndpoint : ICarterModule
         .WithDescription("Delete Basket");
     }
 }
-

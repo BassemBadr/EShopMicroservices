@@ -1,9 +1,11 @@
 ﻿namespace Basket.API.Dtos;
 
+/// <summary>
+/// Everything the client is allowed to supply at checkout. Deliberately has no user name or
+/// customer id: both are taken from the caller's access token by the handler.
+/// </summary>
 public class BasketCheckoutDto
 {
-    public string UserName { get; set; } = default!;
-    public Guid CustomerId { get; set; } = default!;
     public decimal TotalPrice { get; set; } = default!;
 
     // Shipping and BillingAddress

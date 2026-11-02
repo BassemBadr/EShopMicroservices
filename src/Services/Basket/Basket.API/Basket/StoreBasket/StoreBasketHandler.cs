@@ -10,17 +10,21 @@ public class StoreBasketCommandValidator : AbstractValidator<StoreBasketCommand>
 {
     public StoreBasketCommandValidator()
     {
+        // No UserName rule: the owner is stamped from the access token by the handler.
         RuleFor(x => x.Cart).NotNull().WithMessage("cart can not be null");
-        RuleFor(x => x.Cart.UserName).NotEmpty().WithMessage("UserName is required");
         RuleFor(x => x.Cart.Items).NotNull();
     }
 }
 
 internal class StoreBasketCommandHandler
-    (IBasketRepository repository, DiscountProtoService.DiscountProtoServiceClient discountProto) : ICommandHandler<StoreBasketCommand, StoreBasketResult>
+    (IBasketRepository repository, DiscountProtoService.DiscountProtoServiceClient discountProto, IUserContext userContext)
+    : ICommandHandler<StoreBasketCommand, StoreBasketResult>
 {
     public async Task<StoreBasketResult> Handle(StoreBasketCommand command, CancellationToken cancellationToken)
     {
+        // The basket always belongs to the caller — never to a name supplied in the body.
+        command.Cart.UserName = userContext.RequireUserKey();
+
         await DeductDiscount(command.Cart, cancellationToken);
 
         await repository.StoreBasket(command.Cart, cancellationToken);

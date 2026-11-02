@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.IdentityModel.Tokens;
 using Shopping.Web.HttpHandlers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -45,6 +44,9 @@ builder.Services.AddAuthentication(options =>
     options.UsePkce = true;
     options.SaveTokens = true;                       // keep access_token for the handler
     options.GetClaimsFromUserInfoEndpoint = true;
+    // Keep the raw 'sub'/'role'/'name' claim types: the service-side validators use
+    // MapInboundClaims = false, so both sides must see the same claim names.
+    options.MapInboundClaims = false;
     options.Scope.Add("openid");
     options.Scope.Add("profile");
     options.Scope.Add("email");
@@ -53,11 +55,8 @@ builder.Services.AddAuthentication(options =>
     options.Scope.Add("basket-api");
     options.Scope.Add("ordering-api");
     options.Scope.Add("offline_access");             // refresh token (client has AllowOfflineAccess)
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        NameClaimType = "name",
-        RoleClaimType = "role"
-    };
+    options.TokenValidationParameters.NameClaimType = "name";
+    options.TokenValidationParameters.RoleClaimType = "role";
 
     var publicAuthority = builder.Configuration["IdentityServer:PublicAuthority"]
     ?? builder.Configuration["IdentityServer:Authority"]!;

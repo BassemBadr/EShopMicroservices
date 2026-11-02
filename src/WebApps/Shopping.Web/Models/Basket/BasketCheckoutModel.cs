@@ -1,9 +1,11 @@
 ﻿namespace Shopping.Web.Models.Basket;
 
+/// <summary>
+/// What the browser may send at checkout. It has no user name or customer id: the basket API
+/// takes both from the caller's access token before publishing the checkout event.
+/// </summary>
 public class BasketCheckoutModel
 {
-    public string UserName { get; set; } = default!;
-    public Guid CustomerId { get; set; } = default!;
     public decimal TotalPrice { get; set; } = default!;
 
     // Shipping and BillingAddress

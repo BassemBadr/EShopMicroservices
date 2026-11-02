@@ -4,36 +4,30 @@ namespace Shopping.Web.Services;
 
 public interface IBasketService
 {
-    [Get("/basket-service/basket/{userName}")]
-    Task<GetBasketResponse> GetBasket(string userName);
+    // The basket API takes the owner from the access token, so the client never names a user.
+    [Get("/basket-service/basket")]
+    Task<GetBasketResponse> GetBasket();
 
     [Post("/basket-service/basket")]
     Task<StoreBasketResponse> StoreBasket(StoreBasketRequest request);
 
-    [Delete("/basket-service/basket/{userName}")]
-    Task<DeleteBasketResponse> DeleteBasket(string userName);
+    [Delete("/basket-service/basket")]
+    Task<DeleteBasketResponse> DeleteBasket();
 
     [Post("/basket-service/basket/checkout")]
     Task<CheckoutBasketResponse> CheckoutBasket(CheckoutBasketRequest request);
 
     public async Task<ShoppingCartModel> LoadUserBasket()
     {
-        //TODO: replace username after adding authentication
-        var userName = "swn";
-        ShoppingCartModel basket;
         try
         {
-            var getBasketResponse = await GetBasket(userName);
-            basket = getBasketResponse.Cart;
+            var getBasketResponse = await GetBasket();
+            return getBasketResponse.Cart;
         }
         catch (ApiException apiException) when (apiException.StatusCode == HttpStatusCode.NotFound)
         {
-            basket = new ShoppingCartModel
-            {
-                UserName = userName,
-                Items = []
-            };
+            // No basket stored for this caller yet — start from an empty local cart.
+            return new ShoppingCartModel { Items = [] };
         }
-        return basket;
     }
 }

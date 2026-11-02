@@ -13,6 +13,10 @@ namespace Shopping.Web.Pages
         {
             Cart = await basketService.LoadUserBasket();
 
+            // Preselect credit card (1 = Credit card in the markup). The checked state is now driven
+            // by the model, so a failed POST keeps whatever the user actually picked.
+            Order = new BasketCheckoutModel { PaymentMethod = 1 };
+
             return Page();
         }
 
@@ -27,9 +31,8 @@ namespace Shopping.Web.Pages
                 return Page();
             }
 
-            //TODO: replace fixed customerId with dynamic one after implementing authentication
-            Order.CustomerId = new Guid("58c49479-ec65-4de2-86e7-033c546291aa");
-            Order.UserName = Cart.UserName;
+            // UserName and CustomerId are not sent from here any more: the basket API stamps both
+            // from the caller's access token before publishing the checkout event to Ordering.
             Order.TotalPrice = Cart.TotalPrice;
 
             await basketService.CheckoutBasket(new CheckoutBasketRequest(Order));
