@@ -25,18 +25,46 @@ internal class StoreBasketCommandHandler
         // The basket always belongs to the caller — never to a name supplied in the body.
         command.Cart.UserName = userContext.RequireUserKey();
 
-        await DeductDiscount(command.Cart, cancellationToken);
+        var storedCart = await LoadStoredCart(command.Cart.UserName, cancellationToken);
+
+        await DeductDiscount(command.Cart, storedCart, cancellationToken);
 
         await repository.StoreBasket(command.Cart, cancellationToken);
 
         return new StoreBasketResult(command.Cart.UserName);
     }
 
-    private async Task DeductDiscount(ShoppingCart cart, CancellationToken cancellationToken)
+    /// <summary>The store throws when the caller has no basket yet; that is a normal first store.</summary>
+    private async Task<ShoppingCart?> LoadStoredCart(string userName, CancellationToken cancellationToken)
+    {
+        try
+        {
+            return await repository.GetBasket(userName, cancellationToken);
+        }
+        catch (BasketNotFoundException)
+        {
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Applies the product discount once per line. The client posts the whole cart back on every
+    /// change (add, remove, quantity), so a line that is already stored keeps its stored price —
+    /// re-deducting would shave the discount off it again on each edit.
+    /// </summary>
+    private async Task DeductDiscount(ShoppingCart cart, ShoppingCart? storedCart, CancellationToken cancellationToken)
     {
         //  Communicate with discount gRPC service to get discount for each item in the cart and deduct it from the price of the item
         foreach (var item in cart.Items)
         {
+            var storedItem = storedCart?.Items.FirstOrDefault(stored => stored.ProductId == item.ProductId);
+
+            if (storedItem is not null)
+            {
+                item.Price = storedItem.Price;
+                continue;
+            }
+
             var discount = await discountProto.GetDiscountAsync(new GetDiscountRequest { ProductName = item.ProductName }, cancellationToken: cancellationToken);
             item.Price -= discount.Amount;
         }

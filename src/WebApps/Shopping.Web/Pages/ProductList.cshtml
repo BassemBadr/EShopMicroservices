@@ -10,7 +10,7 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a asp-page="Index">Home</a></li>
-                    <li class="breadcrumb-item"><a asp-page="Product">Category</a></li>
+                    <li class="breadcrumb-item"><a asp-page="/ProductList">Category</a></li>
                     <li class="breadcrumb-item active" aria-current="page">@Model.SelectedCategory</li>
                 </ol>
             </nav>
@@ -27,7 +27,7 @@
 
                     @foreach (var category in Model.CategoryList)
                     {
-                        <li class="list-group-item"><a asp-page="Product" asp-route-categoryId="@category">@category</a></li>
+                        <li class="list-group-item"><a asp-page="/ProductList" asp-route-categoryName="@category">@category</a></li>
                     }
 
                 </ul>
