@@ -11,7 +11,10 @@
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a asp-page="Index">Home</a></li>
                     <li class="breadcrumb-item"><a asp-page="/ProductList">Category</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">@Model.SelectedCategory</li>
+                    @if (!string.IsNullOrEmpty(Model.SelectedCategory))
+                    {
+                        <li class="breadcrumb-item active" aria-current="page">@Model.SelectedCategory</li>
+                    }
                 </ol>
             </nav>
         </div>
@@ -33,15 +36,22 @@
                 </ul>
             </div>
 
-            <div class="card bg-light mb-3">
-                <div class="card-header bg-success text-white text-uppercase">Last product</div>
-                <div class="card-body">
-                    <img asp-append-version="true" class="img-fluid" src="~/images/product/@Model.ProductList.LastOrDefault()!.ImageFile" />
-                    <h5 class="card-title">@Model.ProductList.LastOrDefault()!.Name</h5>
-                    <p class="card-text">@Model.ProductList.LastOrDefault()!.Description</p>
-                    <p class="bloc_left_price">@Model.ProductList.LastOrDefault()!.Price $</p>
+            @{
+                var lastProduct = Model.ProductList.LastOrDefault();
+            }
+
+            @if (lastProduct is not null)
+            {
+                <div class="card bg-light mb-3">
+                    <div class="card-header bg-success text-white text-uppercase">Last product</div>
+                    <div class="card-body">
+                        <img asp-append-version="true" class="img-fluid" src="~/images/product/@lastProduct.ImageFile" />
+                        <h5 class="card-title">@lastProduct.Name</h5>
+                        <p class="card-text">@lastProduct.Description</p>
+                        <p class="bloc_left_price">@lastProduct.Price $</p>
+                    </div>
                 </div>
-            </div>
+            }
 
         </div>
 

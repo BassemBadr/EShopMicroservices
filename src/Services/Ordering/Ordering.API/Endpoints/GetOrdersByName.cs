@@ -5,7 +5,7 @@ namespace Ordering.API.Endpoints;
 //- Accepts a name parameter
 //- Constructs a GetOrdersByNameQuery with the provided parameters
 //- Uses MediatR to  send the query to the corresponding handler
-//- Returns matching orders based on the provided name
+//- Returns the caller's matching orders based on the provided name
 
 //public record GetOrdersByNameRequest(string Name);
 
@@ -27,6 +27,6 @@ public class GetOrdersByName : ICarterModule
         .Produces<GetOrdersByNameResponse>(StatusCodes.Status200OK)
         .ProducesProblem(StatusCodes.Status400BadRequest)
         .WithSummary("Get orders by name")
-        .WithDescription("Retrieves orders based on the provided order name.");
+        .WithDescription("Retrieves the caller's orders whose name contains the provided value.");
     }
 }

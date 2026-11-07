@@ -69,7 +69,9 @@ internal class StoreBasketCommandHandler
             }
 
             var discount = await discountProto.GetDiscountAsync(new GetDiscountRequest { ProductName = item.ProductName }, cancellationToken: cancellationToken);
-            item.Price -= discount.Amount;
+
+            // A discount bigger than the price must never turn a line negative.
+            item.Price = Math.Max(0, item.Price - discount.Amount);
         }
     }
 }

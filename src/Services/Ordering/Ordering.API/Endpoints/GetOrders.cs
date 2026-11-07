@@ -28,6 +28,6 @@ public class GetOrders : ICarterModule
         .Produces<GetOrdersResponse>(StatusCodes.Status200OK)
         .ProducesProblem(StatusCodes.Status400BadRequest)
         .WithSummary("Get orders")
-        .WithDescription("Retrieves a paginated list of orders.");
+        .WithDescription("Retrieves a paginated list of orders: only the caller's own orders for a user token, every order for a client token.");
     }
 }

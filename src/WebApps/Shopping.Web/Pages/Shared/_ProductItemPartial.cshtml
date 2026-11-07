@@ -13,9 +13,9 @@
 
                 @*<a asp-page="Cart" asp-route-productId="@Model.Id" class="btn btn-success btn-block">Add to Cart</a>*@
 
-                <form asp-page-handler="AddToCart" method="post" name="addToCartForm" id="add_cart_form">
-                    <a href="javascript:;" onclick="parentNode.submit();" class="btn btn-success btn-block">Add to Cart</a>
-                    <input type="hidden" asp-for="@Model.Id" name="productId" />
+                <form asp-page-handler="AddToCart" method="post">
+                    <input type="hidden" name="productId" value="@Model.Id" />
+                    <button type="submit" class="btn btn-success btn-block">Add to Cart</button>
                 </form>
 
             </div>

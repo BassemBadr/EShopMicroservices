@@ -2,7 +2,7 @@
 
 namespace Ordering.Application.Orders.Queries.GetOrders;
 
-public class GetOrdersHandler(IApplicationDbContext dbContext)
+public class GetOrdersHandler(IApplicationDbContext dbContext, IUserContext userContext)
     : IQueryHandler<GetOrdersQuery, GetOrdersResult>
 {
     public async Task<GetOrdersResult> Handle(GetOrdersQuery query, CancellationToken cancellationToken)
@@ -12,9 +12,11 @@ public class GetOrdersHandler(IApplicationDbContext dbContext)
         var pageIndex = query.PaginationRequest.PageIndex;
         var pageSize = query.PaginationRequest.PageSize;
 
-        var totalCount = await dbContext.Orders.LongCountAsync(cancellationToken);
+        var ordersQuery = dbContext.Orders.ForCaller(userContext);
 
-        var orders = await dbContext.Orders
+        var totalCount = await ordersQuery.LongCountAsync(cancellationToken);
+
+        var orders = await ordersQuery
                         .Include(o => o.OrderItems)
                         .AsNoTracking()
                         .OrderBy(o => o.OrderName.Value)

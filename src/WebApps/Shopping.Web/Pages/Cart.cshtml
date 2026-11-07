@@ -33,6 +33,15 @@
                     </thead>
                     <tbody>
 
+                        @if (Model.Cart.Items.Count == 0)
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center">
+                                    Your cart is empty — <a asp-page="/ProductList">browse the products</a>.
+                                </td>
+                            </tr>
+                        }
+
                         @foreach (var cartItem in Model.Cart.Items)
                         {
                             <tr>

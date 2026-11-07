@@ -64,10 +64,10 @@
                                 </div>
                             </div>
                         </div>
-                        <a href="javascript:;" onclick="parentNode.submit();" class="btn btn-success btn-lg btn-block text-uppercase">
+                        <button type="submit" class="btn btn-success btn-lg btn-block text-uppercase">
                             <i class="fa fa-shopping-cart"></i> Add To Cart
-                        </a>
-                        <input type="hidden" asp-for="@Model.Product.Id" name="productId" />
+                        </button>
+                        <input type="hidden" name="productId" value="@Model.Product.Id" />
                     </form>
                     <div class="product_rassurance">
                         <ul class="list-inline">

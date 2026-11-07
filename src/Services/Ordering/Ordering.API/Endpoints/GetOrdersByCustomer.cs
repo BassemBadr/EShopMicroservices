@@ -2,10 +2,10 @@
 
 namespace Ordering.API.Endpoints;
 
-//- Accepts a customer Id
-//- Constructs a GetOrdersByCustomerQuery with the provided parameters
+//- Takes the caller's identity from the validated access token
+//- Constructs a GetOrdersByCustomerQuery (no customer Id in the route)
 //- Uses MediatR to  send the query to the corresponding handler
-//- Returns matching orders based on the provided customer Id
+//- Returns the caller's orders
 
 //public record GetOrdersByCustomerRequest(Guid CustomerId);
 
@@ -15,9 +15,9 @@ public class GetOrdersByCustomer : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapGet("/orders/customer/{customerId}", async (Guid customerId, ISender sender) =>
+        app.MapGet("/orders/customer", async (ISender sender) =>
         {
-            var result = await sender.Send(new GetOrdersByCustomerQuery(customerId));
+            var result = await sender.Send(new GetOrdersByCustomerQuery());
             
             var response = result.Adapt<GetOrdersByCustomerResponse>();
             
@@ -27,6 +27,6 @@ public class GetOrdersByCustomer : ICarterModule
         .Produces<GetOrdersByCustomerResponse>(StatusCodes.Status200OK)
         .ProducesProblem(StatusCodes.Status400BadRequest)
         .WithSummary("Get orders by customer")
-        .WithDescription("Retrieves orders based on the provided customer Id.");
+        .WithDescription("Retrieves the caller's own orders; the customer is taken from the access token, not the URL.");
     }
 }
